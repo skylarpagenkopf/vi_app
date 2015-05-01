@@ -4,10 +4,51 @@ block content
 	ol.breadcrumb
 		li.active Home
 	h3 Overview
-	p This application takes a photo of an outfit of your choice and find similar outfits from polyvore. Upload a photo of an outfit or someone wearing an outfit you like and browse through the results by subitting the form below!
-	h3 Upload
-	form.form-inline(action='/', method='post', role='form', enctype='multipart/form-data')
+	p.contsection This application takes a photo of an outfit of your choice and find similar outfits from polyvore. Upload a photo of an outfit or someone wearing an outfit you like and browse through the results by submitting the form below! You can also check out results using some of our example images.
+	h3 Example images
+	.row.contsection
+		.col-md-2
+			a(href='/results/exampleinput1').thumbnail
+				img.thumb(src='/images/exampleinput1.jpg')
+		.col-md-2
+			a(href='/results/exampleinput2').thumbnail
+				img.thumb(src='/images/exampleinput2.jpg')
+		.col-md-2
+			a(href='/results/exampleinput3').thumbnail
+				img.thumb(src='/images/exampleinput3.jpg')
+		.col-md-2
+			a(href='/results/exampleinput4').thumbnail
+				img.thumb(src='/images/exampleinput4.jpg')
+		.col-md-2
+			a(href='/results/exampleinput5').thumbnail
+				img.thumb(src='/images/exampleinput5.jpg')
+	h3 Select your own image
+	.alert.alert-danger.Hidden
+		button(type='button').close &times;
+		strong Error: 
+		span Message
+	form.contsection.form-inline(action='/results', method='post', role='form', enctype='multipart/form-data')
 		.form-group
 			label(for='inputFile') File input
-			input(type='file', name='inputFile', id='inputFile')
-		button.btn.btn-primary(type='submit') Upload
+			input.inputFile(type='file', name='inputFile', id='inputFile')
+		button.btn.btn-primary.submit(type='submit') Submit
+
+	script.
+		$(document).on('DOMContentLoaded', function() {
+			$('.submit').click(function(e) {
+				e.preventDefault();
+				var ext = $('.inputFile').val().split('.').pop().toLowerCase();
+				if (ext == '') {
+					$('.alert span').html('You did not select a file.');
+					$('.alert').removeClass('Hidden');
+				} else if (ext != 'gif' && ext != 'png' && ext != 'jpg' && ext != 'jpeg') {
+					$('.alert span').html('You must select an image file.');
+					$('.alert').removeClass('Hidden');
+				} else {
+					$('form').submit();
+				}
+			});
+			$('.close').click(function(e) {
+				$('.alert').addClass('Hidden');
+			});
+		});

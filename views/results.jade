@@ -5,4 +5,17 @@ block content
 		li
 			a(href='/') Home
 		li.active Results
-	h3 Results
+	.row
+		.col-md-4
+			h3 Original image
+			img.img(src='#{relPath}')
+		.col-md-8
+			h3 Results
+			//- Display results thumbs grid here
+	script.
+		$(document).on('DOMContentLoaded', function() {
+			// if not an example input image, remove the temp image
+			if ($('.img').attr('src').indexOf('/temp/') != -1) {
+				$.get('../remove/' + $('.img').attr('src').split('/')[2]);
+			}
+		});

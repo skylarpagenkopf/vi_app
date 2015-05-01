@@ -1,8 +1,25 @@
 body {
   padding: 20px 50px 20px 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-a {
-  color: #00B7FF;
+.thumb {
+	max-height: 300px;
+}
+
+.contsection {
+	padding-left: 20px;
+}
+
+.alert {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.Hidden {
+	display: none;
+}
+
+.img {
+	margin: 10px;
+	width: 100%;
 }
