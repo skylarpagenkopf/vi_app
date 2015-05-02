@@ -24,6 +24,7 @@
     "opencv": "^3.0.0",
     "passport": "^0.2.1",
     "passport-local": "^1.0.0",
+    "request": "^2.55.0",
     "serve-favicon": "~2.2.0"
   }
 }

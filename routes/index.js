@@ -1,7 +1,8 @@
 var express = require('express');
 var fs = require('fs');
+var exec = require('child_process').exec;
 var path = require('path');
-var processing = require('../public/js/processing.js');
+// var processing = require('../public/js/processing.js');
 var appDir = path.dirname(require.main.filename);
 var router = express.Router();
 
@@ -34,13 +35,23 @@ router.post('/results', function(req, res) {
 		relPath = 'images/temp/' + req.files.inputFile.name;
 		fs.writeFile(filePath, data, function (err) {
 			// do image processing
-			results = processing.process(filePath);
-			// render page
-			res.render('results', { 
-				title: 'Results',
-				relPath: relPath,
-				results: results
-			});
+			var python = require('child_process').spawn('python',
+			     // second argument is array of parameters, e.g.:
+			     [appDir + '/public/python/processing.py'
+			     , filePath]
+		     );
+		     var output = '';
+		     python.stdout.on('data', function(data) { output += data });
+		     python.on('close', function(code){ 
+		     	results = output;
+		     	console.log(results);
+		     	// render page
+				res.render('results', { 
+					title: 'Results',
+					relPath: relPath,
+					results: results
+				});
+		     });
 		});
 	});
 });
@@ -58,13 +69,23 @@ router.get('/results/:filename', function(req, res) {
 		relPath = '../images/' + req.params.filename + '.jpg',
 		results = [];
 	// do image processing
-	results = processing.process(filePath);
-	// render page
-	res.render('results', { 
-		title: 'Results',
-		relPath: relPath,
-		results: results
-	});
+	var python = require('child_process').spawn('python',
+	     // second argument is array of parameters, e.g.:
+	     [appDir + '/public/python/processing.py'
+	     , filePath]
+     );
+     var output = '';
+     python.stdout.on('data', function(data) { output += data });
+     python.on('close', function(code){ 
+     	results = output;
+     	console.log(results);
+     	// render page
+		res.render('results', { 
+			title: 'Results',
+			relPath: relPath,
+			results: results
+		});
+     });
 });
 
 module.exports = router;
