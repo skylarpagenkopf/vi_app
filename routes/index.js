@@ -1,6 +1,5 @@
 var express = require('express');
 var fs = require('fs');
-var exec = require('child_process').exec;
 var path = require('path');
 // var processing = require('../public/js/processing.js');
 var appDir = path.dirname(require.main.filename);

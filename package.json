@@ -13,18 +13,13 @@
     "debug": "~2.1.1",
     "express": "^4.11.2",
     "express-session": "^1.10.4",
-    "gridfs-stream": "^1.1.0",
     "jade": "^1.9.2",
     "mongodb": "^2.0.28",
     "mongoose": "^4.0.2",
     "morgan": "~1.5.1",
     "multer": "^0.1.8",
-    "node-gyp": "^1.0.3",
-    "node-pre-gyp": "^0.6.5",
-    "opencv": "^3.0.0",
     "passport": "^0.2.1",
     "passport-local": "^1.0.0",
-    "request": "^2.55.0",
     "serve-favicon": "~2.2.0"
   }
 }
