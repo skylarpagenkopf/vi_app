@@ -35,7 +35,6 @@ router.post('/results', function(req, res) {
 		fs.writeFile(filePath, data, function (err) {
 			// do image processing
 			results = processing.process(filePath);
-			console.log(results);
 			// render page
 			res.render('results', { 
 				title: 'Results',
@@ -58,9 +57,8 @@ router.get('/results/:filename', function(req, res) {
 	var filePath = appDir + '/public/images/' + req.params.filename + '.jpg',
 		relPath = '../images/' + req.params.filename + '.jpg',
 		results = [];
-	console.log(filePath);
 	// do image processing
-	// get results
+	results = processing.process(filePath);
 	// render page
 	res.render('results', { 
 		title: 'Results',
