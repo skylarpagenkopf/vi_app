@@ -27,11 +27,14 @@ router.get('/', function(req, res) {
 router.post('/results', function(req, res) {
 	var results = [],
 		filePath,
-		relPath;
+		relPath,
+		detailsPath;
 	// upload file to temp folder
 	fs.readFile(req.files.inputFile.path, function (err, data) {
 		filePath = appDir + '/public/images/temp/' + req.files.inputFile.name;
-		relPath = 'images/temp/' + req.files.inputFile.name;
+		relPath = 'images/temp/' + req.files.inputFile.name,
+		details = req.files.inputFile.name.split('.'),
+		detailsPath = 'images/temp/' + details[0] + 'details.' + details[1];
 		fs.writeFile(filePath, data, function (err) {
 			// do image processing
 			var python = require('child_process').spawn('python',
@@ -48,6 +51,7 @@ router.post('/results', function(req, res) {
 				res.render('results', { 
 					title: 'Results',
 					relPath: relPath,
+					detailsPath: detailsPath,
 					results: results
 				});
 		     });
@@ -57,8 +61,11 @@ router.post('/results', function(req, res) {
 
 // remove temp image after processing so we don't have a million images in our app
 router.get('/remove/:image', function (req, res) {
-	var filePath = appDir + '/public/images/temp/' + req.params.image;
+	var filePath = appDir + '/public/images/temp/' + req.params.image,
+		details = req.params.image.split('.'),
+		detailsPath = appDir + '/public/images/temp/' + details[0] + 'details.' + details[1];
 	fs.unlinkSync(filePath);
+	fs.unlinkSync(detailsPath);
 });
 
 // get example image results
@@ -66,6 +73,7 @@ router.get('/results/:filename', function(req, res) {
 	// use image specified in filename param
 	var filePath = appDir + '/public/images/' + req.params.filename + '.jpg',
 		relPath = '../images/' + req.params.filename + '.jpg',
+		detailsPath = '../images/' + req.params.filename + 'details.jpg',
 		results = [];
 	// do image processing
 	var python = require('child_process').spawn('python',
@@ -82,6 +90,7 @@ router.get('/results/:filename', function(req, res) {
 		res.render('results', { 
 			title: 'Results',
 			relPath: relPath,
+			detailsPath: detailsPath,
 			results: results
 		});
      });

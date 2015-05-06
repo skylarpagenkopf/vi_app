@@ -32,6 +32,10 @@ block content
 			label(for='inputFile') File input
 			input.inputFile(type='file', name='inputFile', id='inputFile')
 		button.btn.btn-primary.submit(type='submit') Submit
+	.modal.fade.loadingmodal(role='dialog', aria-labelledby='loadingmodal', aria-hidden='true')
+		.modal-dialog.modal-sm
+			.modal-content
+				h3 Processing image...
 
 	script.
 		$(document).on('DOMContentLoaded', function() {
@@ -46,8 +50,16 @@ block content
 					$('.alert').removeClass('Hidden');
 				} else {
 					$('form').submit();
+					$('.loadingmodal').modal('show');
+					//- $('.fadeout').fadeOut(1000);
 				}
 			});
+
+			$('a').click(function() {
+				$('.loadingmodal').modal('show');
+				//- $('.fadeout').fadeOut(1000);
+			});
+
 			$('.close').click(function(e) {
 				$('.alert').addClass('Hidden');
 			});

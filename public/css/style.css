@@ -23,3 +23,36 @@ body {
 	margin: 10px;
 	width: 100%;
 }
+
+.detectimg {
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.modal-title {
+	font-size: 17px;
+	text-align: center;
+}
+
+.red {
+	font-weight: bold;
+	color: red;
+}
+
+.green {
+	font-weight: bold;
+	color: green;
+}
+
+.modal-sm {
+	margin-top: 20%;
+	text-align: center;
+}
+
+.modal-content {
+	padding-bottom: 10px;
+}
+
+.btn {
+	margin-right: 20px;
+}

@@ -12,9 +12,29 @@ block content
 		.col-md-8
 			h3 Results
 			//- Display results thumbs grid here
+			button(type='button',data-toggle='modal',data-target='.resultsmodal').btn.btn-primary
+				span View detection details
 			a(href='/')
 				button(type='button').btn.btn-primary
 					span Try another image
+	.modal.fade.resultsmodal(tabindex='-1', role='dialog', aria-labelledby='resultsmodal', aria-hidden='true')
+		.modal-dialog
+			.modal-content
+				.modal-header
+					button.close(data-dismiss='modal', aria-label='Close')
+						span(aria-hidden='true') &times;
+					.modal-title
+						.detectdetails.row
+							.col-md-6
+								span Human detection is 
+									span.green green
+							.col-md-5
+								span Human contours are 
+									span.red red
+				.modal-body
+					img.detectimg(src='#{detailsPath}')
+
+
 	script.
 		$(document).on('DOMContentLoaded', function() {
 			// if not an example input image, remove the temp image
