@@ -28,6 +28,7 @@ def draw_detections(img, rects, thickness = 1):
 results = []
 # read the image
 filePath = '../images/exampleinput5.jpg'
+filename = 'exampleinput5.jpg'
 img = cv2.imread(filePath)
 # cv2.imshow('a', img)
 # process image for human
@@ -74,10 +75,10 @@ if len(cnt_filtered_final) == 0:
 			cnt_filtered_final.append(cnt)
 # draw and save details
 cv2.drawContours(img, cnt_filtered_final, -1, (0,0,255), 2)
-detailspath = filePath.split('.')[0] + 'details.' + filePath.split('.')[1]
- 
+detailspath = '../images/temp/' +  filename.split('.')[0] + 'details.' + filename.split('.')[1]
+print detailspath
+cv2.imwrite(detailspath, img) 
 
-# get path names for images
 # get path names for images
 imageNames = os.listdir("../images/polyvore_images")
 # get the histograms for each image

@@ -30,7 +30,7 @@ results = []
 # read the image
 filePath = sys.argv[1]
 img = cv2.imread(filePath)
-
+# cv2.imshow('a', img)
 # process image for human
 hog = cv2.HOGDescriptor()
 hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
@@ -75,9 +75,10 @@ if len(cnt_filtered_final) == 0:
 			cnt_filtered_final.append(cnt)
 # draw and save details
 cv2.drawContours(img, cnt_filtered_final, -1, (0,0,255), 2)
-detailspath = filePath.split(".")[0] + "details." + filePath.split(".")[1]
-cv2.imwrite(detailspath, img)
+detailspath = '../images/temp/' +  filePath.split('.')[0] + 'details.' + filePath.split('.')[1]
+cv2.imwrite(detailspath, img) 
 
+# get path names for images
 # get path names for images
 imageNames = os.listdir("../images/polyvore_images")
 # get the histograms for each image
@@ -104,15 +105,17 @@ hist = cv2.calcHist([orig], [0, 1, 2], mask, [8, 8, 8], [0, 255, 0, 255, 0, 255]
 hist = cv2.normalize(hist).flatten()
 histogram.append(hist)
 # compare histograms to find alike images
-result = {}
+results = {}
 for i in xrange(1, len(histograms)):
 	score = 1 - cv2.compareHist(histograms[i], histogram[0], cv2.cv.CV_COMP_BHATTACHARYYA)
-	result[i] = score
-result = sorted([(v, k) for (k, v) in result.items()], reverse = 1)
+	results[i] = score
+results = sorted([(v, k) for (k, v) in results.items()], reverse = 1)
 
 path = "../images/polyvore_images/"
-
+out = []
 for i in xrange(18):
-	results.append(path + imageNames[result[i][1]])
+	out.append(path + imageNames[results[i][1]])
 
-print json.dumps(results)
+print json.dumps(out)
+
+
