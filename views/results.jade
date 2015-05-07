@@ -12,11 +12,17 @@ block content
 		.col-md-8
 			h3 Results
 			//- Display results thumbs grid here
-			button(type='button',data-toggle='modal',data-target='.resultsmodal').btn.btn-primary
-				span View detection details
-			a(href='/')
-				button(type='button').btn.btn-primary
-					span Try another image
+			.row.results
+				for result in results
+					.col-md-2
+						a(href='#').imgtrigger
+							img.img(src='#{result}',data-toggle='modal',data-target='.imagemodal')
+			.buttons
+				button(type='button',data-toggle='modal',data-target='.resultsmodal').btn.btn-primary
+					span View detection details
+				a(href='/')
+					button(type='button').btn.btn-primary
+						span Try another image
 	.modal.fade.resultsmodal(tabindex='-1', role='dialog', aria-labelledby='resultsmodal', aria-hidden='true')
 		.modal-dialog
 			.modal-content
@@ -33,6 +39,15 @@ block content
 									span.red red
 				.modal-body
 					img.detectimg(src='#{detailsPath}')
+	.modal.fade.imagemodal(tabindex='-1', role='dialog', aria-labelledby='imagemodal', aria-hidden='true')
+		.modal-dialog
+			.modal-content
+				.modal-header
+					button.close(data-dismiss='modal', aria-label='Close')
+						span(aria-hidden='true') &times;
+					.modal-title Result image
+				.modal-body
+					img.resultimg(src='')
 
 
 	script.
@@ -41,4 +56,8 @@ block content
 			if ($('.img').attr('src').indexOf('/temp/') != -1) {
 				$.get('../remove/' + $('.img').attr('src').split('/')[2]);
 			}
+			$('.imgtrigger').click(function (e) {
+				e.preventDefault();
+				$('.resultimg').attr('src', $($(e.currentTarget).children()[0]).attr('src'));
+			});
 		});

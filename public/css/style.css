@@ -56,3 +56,19 @@ body {
 .btn {
 	margin-right: 20px;
 }
+.buttons {
+	margin-top: 20px;
+}
+.results {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.resultimg {
+	max-width: 100%;
+	text-align: center;
+}
+
+.imagemodal {
+	text-align: center;
+}

@@ -84,7 +84,7 @@ router.get('/results/:filename', function(req, res) {
      var output = '';
      python.stdout.on('data', function(data) { output += data });
      python.on('close', function(code){ 
-     	results = output;
+     	results = JSON.parse(output);
      	console.log(results);
      	// render page
 		res.render('results', { 

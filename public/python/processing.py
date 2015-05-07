@@ -1,6 +1,7 @@
 import cv2
 import sys
 from glob import glob
+import json
 
 def inside(r, q):
     rx, ry, rw, rh = r
@@ -72,7 +73,7 @@ if len(cnt_filtered_final) == 0:
 			cnt_filtered_final.append(cnt)
 # draw and save details
 cv2.drawContours(img, cnt_filtered_final, -1, (0,0,255), 2)
-detailspath = filePath.split('.')[0] + 'details.' + filePath.split('.')[1]
+detailspath = filePath.split(".")[0] + "details." + filePath.split(".")[1]
 cv2.imwrite(detailspath, img)
 
 # compute histogram for inside the main contours and throw away skin color
@@ -80,4 +81,23 @@ cv2.imwrite(detailspath, img)
 # compare to the other images
 
 # print array of results image paths
-print results
+path = "../images/polyvore_images/"
+results = [path + "fb780c1075b8efd5c10d9654c01b37aba4e3e78b.jpg",
+			path + "fba961a8869edd73a1c29ad6d08b9049ecd9eedb.jpg",
+			path + "fbdb75015c6d7fb96977b8c0fc7e0bb6acfaf993.jpg",
+			path + "fbdf4661036f163ebaa107d3ff3383f9e7ae69b2.jpg",
+			path + "fbf669fcfcbe22e4dc9e3706f730f50e3f53033f.jpg",
+			path + "fca81eaeb1a82edfaffe4c3f2910a395c2c012a2.jpg",
+			path + "fd12d99f1e36a06857bd9a8d2641e5940b78ef06.jpg",
+			path + "fdfac74f9b0947ce7a35e3b65735ce9b8ee6c907.jpg",
+			path + "fe9a112528eab6feed307ead80e8181a9b2ca83c.jpg",
+			path + "fef5f79cd9c6fdef6320c6bbad0426b2814aa32d.jpg",
+			path + "fbf669fcfcbe22e4dc9e3706f730f50e3f53033f.jpg",
+			path + "fca81eaeb1a82edfaffe4c3f2910a395c2c012a2.jpg",
+			path + "fd12d99f1e36a06857bd9a8d2641e5940b78ef06.jpg",
+			path + "fdfac74f9b0947ce7a35e3b65735ce9b8ee6c907.jpg",
+			path + "fe9a112528eab6feed307ead80e8181a9b2ca83c.jpg",
+			path + "fef5f79cd9c6fdef6320c6bbad0426b2814aa32d.jpg",
+			path + "fca81eaeb1a82edfaffe4c3f2910a395c2c012a2.jpg",
+			path + "fd12d99f1e36a06857bd9a8d2641e5940b78ef06.jpg"]
+print json.dumps(results)
