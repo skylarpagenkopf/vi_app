@@ -1,8 +1,6 @@
 import cv2
 import sys, os
-import matplotlib.pyplot as plt
 import numpy as np
-from glob import glob
 import json
 
 def inside(r, q):
@@ -26,7 +24,6 @@ def draw_detections(img, rects, thickness = 1):
         pad_w, pad_h = int(0.18*w), int(0.05*h)
         cv2.rectangle(img, (x+pad_w, y+pad_h), (x+w-pad_w, y+h-pad_h), (0, 255, 0), thickness)
 
-results = []
 # read the image
 filePath = sys.argv[1]
 img = cv2.imread(filePath)
@@ -44,6 +41,7 @@ for ri, r in enumerate(found):
             break
     else:
         found_filtered.append(r)
+hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 draw_detections(img, found_filtered, 3)
 
 # get contours
@@ -75,47 +73,46 @@ if len(cnt_filtered_final) == 0:
 			cnt_filtered_final.append(cnt)
 # draw and save details
 cv2.drawContours(img, cnt_filtered_final, -1, (0,0,255), 2)
-detailspath = '../images/temp/' +  filePath.split('.')[0] + 'details.' + filePath.split('.')[1]
-cv2.imwrite(detailspath, img) 
+detailspath = filePath.split(".")[0] + "details." + filePath.split(".")[1]
+cv2.imwrite(detailspath, img)
 
 # get path names for images
-# get path names for images
-imageNames = os.listdir("../images/polyvore_images")
+polyvorePath = sys.argv[2] + "/public/images/polyvore_images/"
+polyvoreImageNames = os.listdir(polyvorePath)
+
 # get the histograms for each image
-images = []
 histograms = []
-for i in xrange(1, len(imageNames)):
-	image = cv2.imread('../images/polyvore_images/' + imageNames[i])
-	image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-	images.append(image)
-	mask = cv2.inRange(image, np.array([5, 5, 5]), np.array([256, 256, 256]))
-	hist = cv2.calcHist([image], [0, 1, 2], mask, [8, 8, 8], [0, 255, 0, 255, 0, 255])
+for i in xrange(0, len(polyvoreImageNames)):
+	polyvoreImg = cv2.imread(polyvorePath + polyvoreImageNames[i])
+	polyvoreImg = cv2.cvtColor(polyvoreImg, cv2.COLOR_BGR2RGB)
+	mask = cv2.inRange(polyvoreImg, np.array([1, 1, 1]), np.array([245, 245, 245]))
+	polyvoreImgHSV = cv2.cvtColor(polyvoreImg, cv2.COLOR_BGR2HSV)
+	skinMask = cv2.inRange(polyvoreImgHSV, np.array([0, 48, 80], dtype = "uint8"), np.array([20, 245, 245], dtype = "uint8"))
+	mask = mask - skinMask
+	hist = cv2.calcHist([polyvoreImg], [0, 1, 2], mask, [8, 8, 8], [0, 255, 0, 255, 0, 255])
 	hist = cv2.normalize(hist).flatten()
 	histograms.append(hist)
 
-# get the histogram for detected human
+# get the histogram for detected human and throw away skin color
 mask = np.zeros((img.shape[0],img.shape[1]), np.uint8)
 for h,cnt in enumerate(cnt_filtered_final):
     cv2.drawContours(mask,[cnt],0,255,-1)
-# throw away skin color
-
+skinMask = cv2.inRange(hsv, np.array([0, 48, 80], dtype = "uint8"), np.array([20, 245, 245], dtype = "uint8"))
+mask = mask - skinMask
 orig = cv2.imread(filePath)
-histogram = []
-hist = cv2.calcHist([orig], [0, 1, 2], mask, [8, 8, 8], [0, 255, 0, 255, 0, 255])
-hist = cv2.normalize(hist).flatten()
-histogram.append(hist)
+origHist = cv2.calcHist([orig], [0, 1, 2], mask, [8, 8, 8], [0, 255, 0, 255, 0, 255])
+origHist = cv2.normalize(origHist).flatten()
+
 # compare histograms to find alike images
 results = {}
 for i in xrange(1, len(histograms)):
-	score = 1 - cv2.compareHist(histograms[i], histogram[0], cv2.cv.CV_COMP_BHATTACHARYYA)
+	score = 1 - cv2.compareHist(histograms[i], origHist, cv2.cv.CV_COMP_BHATTACHARYYA)
 	results[i] = score
 results = sorted([(v, k) for (k, v) in results.items()], reverse = 1)
 
 path = "../images/polyvore_images/"
 out = []
 for i in xrange(18):
-	out.append(path + imageNames[results[i][1]])
+	out.append(path + polyvoreImageNames[results[i][1]])
 
 print json.dumps(out)
-
-

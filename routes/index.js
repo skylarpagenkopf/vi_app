@@ -40,13 +40,13 @@ router.post('/results', function(req, res) {
 			var python = require('child_process').spawn('python',
 			     // second argument is array of parameters, e.g.:
 			     [appDir + '/public/python/processing.py'
-			     , filePath], {cwd: appDir+'/public/python/'}
+			     , filePath
+			     , appDir]
 		     );
 		     var output = '';
 		     python.stdout.on('data', function(data) { output += data });
 		     python.on('close', function(code){ 
 		     	results = JSON.parse(output);
-		     	console.log(results);
 		     	// render page
 				res.render('results', { 
 					title: 'Results',
@@ -55,11 +55,6 @@ router.post('/results', function(req, res) {
 					results: results
 				});
 		     });
-			python.on('exit', function(code) {
-	        if (code != 0) {
-	            console.log('Failed: ' + code);
-	        }
-	    	});
 		});
 	});
 });
@@ -80,19 +75,17 @@ router.get('/results/:filename', function(req, res) {
 		relPath = '../images/' + req.params.filename + '.jpg',
 		detailsPath = '../images/' + req.params.filename + 'details.jpg',
 		results = [];
-		console.log(filePath);
 	// do image processing
 	var python = require('child_process').spawn('python',
 	     // second argument is array of parameters, e.g.:
 	     [appDir + '/public/python/processing.py'
-	     , filePath], {cwd: appDir+'/public/python/'}
+	     , filePath
+	     , appDir]
      );
      var output = '';
-     python.stdout.on('data', function(data) { console.log(data); output += data });
+     python.stdout.on('data', function(data) { output += data });
      python.on('close', function(code){ 
-     	console.log(output);
      	results = JSON.parse(output);
-     	console.log(results);
      	// render page
 		res.render('results', { 
 			title: 'Results',
@@ -101,11 +94,6 @@ router.get('/results/:filename', function(req, res) {
 			results: results
 		});
      });
-     python.on('exit', function(code) {
-        if (code != 0) {
-            console.log('Failed: ' + code);
-        }
-    });
 });
 
 module.exports = router;
