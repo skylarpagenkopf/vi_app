@@ -86,8 +86,7 @@ if '.DS_Store' in polyvoreImageNames:
 histograms = []
 for i in xrange(0, len(polyvoreImageNames)):
 	polyvoreImg = cv2.imread(polyvorePath + polyvoreImageNames[i])
-	polyvoreImg = cv2.cvtColor(polyvoreImg, cv2.COLOR_BGR2RGB)
-	mask = cv2.inRange(polyvoreImg, np.array([1, 1, 1]), np.array([245, 245, 245]))
+	mask = cv2.inRange(polyvoreImg, np.array([1, 1, 1]), np.array([250, 250, 250]))
 	polyvoreImgHSV = cv2.cvtColor(polyvoreImg, cv2.COLOR_BGR2HSV)
 	skinMask = cv2.inRange(polyvoreImgHSV, np.array([0, 48, 80], dtype = "uint8"), np.array([20, 245, 245], dtype = "uint8"))
 	mask = mask - skinMask
@@ -113,8 +112,8 @@ origHist = cv2.normalize(origHist).flatten()
 
 # compare histograms to find alike images
 results = {}
-for i in xrange(1, len(histograms)):
-	score = 1 - cv2.compareHist(histograms[i], origHist, cv2.cv.CV_COMP_BHATTACHARYYA)
+for i in xrange(0, len(histograms)):
+	score = 1-cv2.compareHist(histograms[i], origHist, cv2.cv.CV_COMP_BHATTACHARYYA)
 	results[i] = score
 results = sorted([(v, k) for (k, v) in results.items()], reverse = 1)
 
