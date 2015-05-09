@@ -15,8 +15,8 @@ block content
 			.row.results
 				for result in results
 					.col-md-2
-						a(href='#').imgtrigger
-							img.img(src='#{result}',data-toggle='modal',data-target='.imagemodal')
+						a(href='#{result.link}', target='_blank')
+							img.img(src='#{result.name}')
 			.buttons
 				button(type='button',data-toggle='modal',data-target='.resultsmodal').btn.btn-primary
 					span View detection details
@@ -39,25 +39,13 @@ block content
 									span.red red
 				.modal-body
 					img.detectimg(src='#{detailsPath}')
-	.modal.fade.imagemodal(tabindex='-1', role='dialog', aria-labelledby='imagemodal', aria-hidden='true')
-		.modal-dialog
-			.modal-content
-				.modal-header
-					button.close(data-dismiss='modal', aria-label='Close')
-						span(aria-hidden='true') &times;
-					.modal-title Result image
-				.modal-body
-					img.resultimg(src='')
-
 
 	script.
 		$(document).on('DOMContentLoaded', function() {
 			// if not an example input image, remove the temp image
 			if ($('.img').attr('src').indexOf('/temp/') != -1) {
-				$.get('../remove/' + $('.img').attr('src').split('/')[2]);
+				setTimeout(function () {
+					$.get('../remove/' + $('.img').attr('src').split('/')[2]);
+				}, 1000);
 			}
-			$('.imgtrigger').click(function (e) {
-				e.preventDefault();
-				$('.resultimg').attr('src', $($(e.currentTarget).children()[0]).attr('src'));
-			});
 		});

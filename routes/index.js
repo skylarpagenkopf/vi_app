@@ -5,18 +5,17 @@ var path = require('path');
 var appDir = path.dirname(require.main.filename);
 var router = express.Router();
 
-// if we need db umncomment this
-// // connect to db to get info for page rendering
-// var mongo = require('mongodb');
-// var mongoose = require('mongoose');
-// var ObjectID = mongo.ObjectID;
-// var db;
+// connect to db to get info for page rendering
+var mongo = require('mongodb');
+var mongoose = require('mongoose');
+var ObjectID = mongo.ObjectID;
+var db;
 
-// // connects to db
-// mongo.MongoClient.connect('mongodb://localhost:27017/vi', function(err, database) {
-// 	if (err) throw err;
-// 	db = database;
-// });
+// connects to db
+mongo.MongoClient.connect('mongodb://localhost:27017/vi', function(err, database) {
+	if (err) throw err;
+	db = database;
+});
 
 // get home page where user can upload or select example image
 router.get('/', function(req, res) {
@@ -46,14 +45,35 @@ router.post('/results', function(req, res) {
 		     var output = '';
 		     python.stdout.on('data', function(data) { output += data });
 		     python.on('close', function(code){ 
+		     	var queriesArray = [],
+		     		i;
 		     	results = JSON.parse(output);
-		     	// render page
-				res.render('results', { 
-					title: 'Results',
-					relPath: relPath,
-					detailsPath: detailsPath,
-					results: results
-				});
+		 		for (i=0; i<results.length; i++) {
+		 			name = results[i].split('/');
+		 			name = 'full/' + name[3];
+		 			queriesArray.push({name: name});
+		 		}
+		     	db.collection('rels').find({ $or: queriesArray }).toArray( function(err, data) {
+		     	 	var resultsdict = {},
+		     	 		finalResults = [];
+		     	 	// do this so we preserve ordering
+		     	 	for (i=0; i<data.length; i++) {
+		     	 		resultsdict['../images/polyvore_images/' + data[i].name.split('/')[1]] = 'http://www.polyvore.com/' + data[i].url.split('../')[1]; 
+		     	 	}
+		     	 	for (i=0; i<results.length; i++) {
+		     	 		if (resultsdict[results[i]] == undefined) {
+		     	 			resultsdict[results[i]] = 'http://www.polyvore.com';
+		     	 		}
+		     	 		finalResults.push({name: results[i], link: resultsdict[results[i]]});
+		     	 	}
+		     		// render page
+					res.render('results', { 
+						title: 'Results',
+						relPath: relPath,
+						detailsPath: detailsPath,
+						results: finalResults
+					});
+		     	});
 		     });
 		});
 	});
@@ -85,14 +105,35 @@ router.get('/results/:filename', function(req, res) {
      var output = '';
      python.stdout.on('data', function(data) { output += data });
      python.on('close', function(code){ 
+     	var queriesArray = [],
+     		i;
      	results = JSON.parse(output);
-     	// render page
-		res.render('results', { 
-			title: 'Results',
-			relPath: relPath,
-			detailsPath: detailsPath,
-			results: results
-		});
+ 		for (i=0; i<results.length; i++) {
+ 			name = results[i].split('/');
+ 			name = 'full/' + name[3];
+ 			queriesArray.push({name: name});
+ 		}
+     	db.collection('rels').find({ $or: queriesArray }).toArray( function(err, data) {
+     	 	var resultsdict = {},
+     	 		finalResults = [];
+     	 	// do this so we preserve ordering
+     	 	for (i=0; i<data.length; i++) {
+     	 		resultsdict['../images/polyvore_images/' + data[i].name.split('/')[1]] = 'http://www.polyvore.com/' + data[i].url.split('../')[1]; 
+     	 	}
+     	 	for (i=0; i<results.length; i++) {
+     	 		if (resultsdict[results[i]] == undefined) {
+     	 			resultsdict[results[i]] = 'http://www.polyvore.com';
+     	 		}
+     	 		finalResults.push({name: results[i], link: resultsdict[results[i]]});
+     	 	}
+     		// render page
+			res.render('results', { 
+				title: 'Results',
+				relPath: relPath,
+				detailsPath: detailsPath,
+				results: finalResults
+			});
+     	});
      });
 });
 

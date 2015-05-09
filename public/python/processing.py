@@ -66,11 +66,11 @@ for cnt in cnt_filtered:
 	else:
 		cnt_filtered_final.append(cnt)
 # if none turned up, use max area contours
-if len(cnt_filtered_final) == 0:
-	for cnt in cnt_filtered:
-		area = cv2.contourArea(cnt)
-		if area > 1000:
-			cnt_filtered_final.append(cnt)
+# if len(cnt_filtered_final) == 0:
+# 	for cnt in cnt_filtered:
+# 		area = cv2.contourArea(cnt)
+# 		if area > 1000:
+# 			cnt_filtered_final.append(cnt)
 # draw and save details
 cv2.drawContours(img, cnt_filtered_final, -1, (0,0,255), 2)
 detailspath = filePath.split(".")[0] + "details." + filePath.split(".")[1]
@@ -79,6 +79,8 @@ cv2.imwrite(detailspath, img)
 # get path names for images
 polyvorePath = sys.argv[2] + "/public/images/polyvore_images/"
 polyvoreImageNames = os.listdir(polyvorePath)
+if '.DS_Store' in polyvoreImageNames:
+	polyvoreImageNames.remove('.DS_Store')
 
 # get the histograms for each image
 histograms = []
@@ -94,11 +96,17 @@ for i in xrange(0, len(polyvoreImageNames)):
 	histograms.append(hist)
 
 # get the histogram for detected human and throw away skin color
-mask = np.zeros((img.shape[0],img.shape[1]), np.uint8)
-for h,cnt in enumerate(cnt_filtered_final):
-    cv2.drawContours(mask,[cnt],0,255,-1)
-skinMask = cv2.inRange(hsv, np.array([0, 48, 80], dtype = "uint8"), np.array([20, 245, 245], dtype = "uint8"))
-mask = mask - skinMask
+mask = None 
+if len(found_filtered) > 0:
+	mask = np.zeros((img.shape[0],img.shape[1]), np.uint8)
+	if len(cnt_filtered_final) == 0:
+		draw_detections(mask, found_filtered, -1)
+	else:
+		for h,cnt in enumerate(cnt_filtered_final):
+		    cv2.drawContours(mask,[cnt],0,255,-1)
+	skinMask = cv2.inRange(hsv, np.array([0, 48, 80], dtype = "uint8"), np.array([20, 245, 245], dtype = "uint8"))
+	mask = mask - skinMask
+
 orig = cv2.imread(filePath)
 origHist = cv2.calcHist([orig], [0, 1, 2], mask, [8, 8, 8], [0, 255, 0, 255, 0, 255])
 origHist = cv2.normalize(origHist).flatten()
